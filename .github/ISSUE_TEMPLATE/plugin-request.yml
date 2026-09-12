@@ -1,0 +1,48 @@
+name: Plugin request
+description: Request a new plugin or a change to an existing PluginPort plugin.
+title: "[Plugin request]: "
+labels: ["plugin-request"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Tell us what you want to achieve. An intake assistant will ask any necessary follow-up questions here.
+        Do not include confidential assets, credentials, or client information.
+  - type: input
+    id: plugin
+    attributes:
+      label: Plugin or product
+      description: Which existing plugin is this for? Say “new plugin” if it is a new idea.
+      placeholder: e.g. Headcase, SuperClone, or new plugin
+    validations:
+      required: true
+  - type: textarea
+    id: outcome
+    attributes:
+      label: Desired outcome
+      description: What should a user be able to do when this is complete?
+      placeholder: Describe the result, not just a technical implementation.
+    validations:
+      required: true
+  - type: textarea
+    id: workflow
+    attributes:
+      label: Example workflow
+      description: Describe a typical before-and-after workflow, including host application/version when relevant.
+    validations:
+      required: true
+  - type: textarea
+    id: constraints
+    attributes:
+      label: Constraints or acceptance criteria
+      description: Include must-haves, performance needs, compatibility, visual references, or what would make this successful.
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      options:
+        - Nice to have
+        - Important
+        - Urgent
+    validations:
+      required: true
