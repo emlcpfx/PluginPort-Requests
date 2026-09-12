@@ -46,3 +46,14 @@ body:
         - Urgent
     validations:
       required: true
+  - type: dropdown
+    id: provider
+    attributes:
+      label: Preferred AI provider
+      description: Choose the agent that should clarify and implement this request.
+      options:
+        - Codex
+        - Claude
+        - Gemini
+    validations:
+      required: true

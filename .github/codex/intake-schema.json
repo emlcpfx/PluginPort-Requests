@@ -1,10 +1,11 @@
 {
   "type": "object",
   "additionalProperties": false,
-  "required": ["status", "message", "implementation_brief"],
+  "required": ["status", "message", "implementation_brief", "provider"],
   "properties": {
     "status": { "type": "string", "enum": ["needs_clarification", "ready"] },
     "message": { "type": "string" },
     "implementation_brief": { "type": "string" }
+    ,"provider": { "type": "string", "enum": ["codex", "claude", "gemini"] }
   }
 }
