@@ -36,6 +36,17 @@ body:
     attributes:
       label: Constraints or acceptance criteria
       description: Include must-haves, performance needs, compatibility, visual references, or what would make this successful.
+  - type: textarea
+    id: crash_evidence
+    attributes:
+      label: Crash evidence or PostHog report
+      description: Paste a PostHog error-tracking URL/ID, stack trace, reproduction steps, or a public-safe crash-log excerpt.
+      placeholder: PostHog error URL, error ID, stack trace, and how to reproduce.
+  - type: markdown
+    attributes:
+      value: |
+        ## Attachments
+        After opening the issue, drag images, screen recordings, or log files into a comment to attach them. This is a public repository: remove customer names, email addresses, license keys, file paths, project files, and any other confidential data before uploading.
   - type: dropdown
     id: priority
     attributes:
