@@ -44,7 +44,11 @@ jobs:
             ].join('\n');
             require('fs').writeFileSync('intake-context.md', transcript);
             const provider = /### Preferred AI provider\s*\n\s*(Codex|Claude|Gemini)/i.exec(issue.body || '')?.[1]?.toLowerCase() || 'codex';
+            const product = /### Product\s*\n\s*([^\n]+)/i.exec(issue.body || '')?.[1]?.trim();
+            const routes = {'PluginPort / shared plugins':'VFX-Tools-LLC/PluginPort','ScriptUI Panels':'VFX-Tools-LLC/ScriptUI-Panels','HDM AEIO':'VFX-Tools-LLC/AE_HDM','EXR AEIO':'VFX-Tools-LLC/AE_EXR_AEIO','Denoise Video':'VFX-Tools-LLC/AE_DenoiseVideo','IBK Keyer':'VFX-Tools-LLC/AE_IBK_Keyer'};
+            if (!routes[product]) throw new Error(`No route configured for product: ${product}`);
             core.setOutput('provider', provider);
+            core.setOutput('target_repo', routes[product]);
 
       - name: Clarify the request
         id: codex
@@ -97,12 +101,28 @@ jobs:
             const payload = await response.json();
             require('fs').writeFileSync('agent-output.json', payload.candidates?.[0]?.content?.parts?.map(part => part.text || '').join('') || '');
 
+      - name: Mint VFX Tools GitHub App token
+        id: vfx-app-token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ secrets.VFX_TOOLS_APP_ID }}
+          private-key: ${{ secrets.VFX_TOOLS_APP_PRIVATE_KEY }}
+          owner: VFX-Tools-LLC
+          repositories: |
+            PluginPort
+            ScriptUI-Panels
+            AE_HDM
+            AE_EXR_AEIO
+            AE_DenoiseVideo
+            AE_IBK_Keyer
+
       - name: Post response and hand off ready requests
         uses: actions/github-script@v7
         env:
           AGENT_OUTPUT_FILE: agent-output.json
           REQUEST_PROVIDER: ${{ steps.context.outputs.provider }}
-          DISPATCH_TOKEN: ${{ secrets.PLUGINPORT_DISPATCH_TOKEN }}
+          TARGET_REPO: ${{ steps.context.outputs.target_repo }}
+          DISPATCH_TOKEN: ${{ steps.vfx-app-token.outputs.token }}
         with:
           github-token: ${{ github.token }}
           script: |
@@ -113,8 +133,9 @@ jobs:
               owner: context.repo.owner, repo: context.repo.repo, issue_number: issue.number, body: result.message
             });
             if (result.status !== 'ready') return;
-            await github.request('POST /repos/VFX-Tools-LLC/PluginPort/dispatches', {
-              owner: 'VFX-Tools-LLC', repo: 'PluginPort', event_type: 'plugin-intake-ready',
+            const [owner, repo] = process.env.TARGET_REPO.split('/');
+            await github.request('POST /repos/{owner}/{repo}/dispatches', {
+              owner, repo, event_type: 'plugin-intake-ready',
               client_payload: {
                 public_issue_url: issue.html_url,
                 public_issue_number: issue.number,

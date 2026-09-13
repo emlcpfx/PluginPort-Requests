@@ -8,12 +8,18 @@ body:
       value: |
         Tell us what you want to achieve. An intake assistant will ask any necessary follow-up questions here.
         Do not include confidential assets, credentials, or client information.
-  - type: input
-    id: plugin
+  - type: dropdown
+    id: product
     attributes:
-      label: Plugin or product
-      description: Which existing plugin is this for? Say “new plugin” if it is a new idea.
-      placeholder: e.g. Headcase, SuperClone, or new plugin
+      label: Product
+      description: Select the product that owns this request.
+      options:
+        - PluginPort / shared plugins
+        - ScriptUI Panels
+        - HDM AEIO
+        - EXR AEIO
+        - Denoise Video
+        - IBK Keyer
     validations:
       required: true
   - type: textarea
